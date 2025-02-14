@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Canvas Game</title>
+</head>
+<body>
+    <canvas height='300' width='300' id='chess'> </canvas>
+    <canvas height='300' width='300' id='lines'> </canvas>
+    <canvas id="myCanvas" width="500" height="400"></canvas>
+    <script>
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        var prevX = 10; // Начальная точка X
+        var prevY = 300; // Начальная точка Y
+        var ctrlX = 250; // Контрольная точка X
+        var ctrlY = 200; // Контрольная точка Y
+        var endX = 490; // Конечная точка X
+        var endY = 300; // Конечная точка Y
+        var steps = 100; // Количество итераций для плавной отрисовки
+        var currentStep = 0;
+
+        function render() {
+            if (currentStep <= steps) {
+                drawCurve(currentStep);
+                currentStep++;
+                requestAnimationFrame(render);
+            }
+        }
+
+        function drawCurve(step) {
+            ctx.clearRect(0, 0, c.width, c.height); // Очищаем холст на каждом кадре
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+
+            // Вычисляем текущее значение t
+            var t = step / steps;
+
+            // Линейная интерполяция для промежуточной точки
+            var curveX = (1 - t) * (1 - t) * prevX + 2 * (1 - t) * t * ctrlX + t * t * endX;
+            var curveY = (1 - t) * (1 - t) * prevY + 2 * (1 - t) * t * ctrlY + t * t * endY;
+
+            ctx.quadraticCurveTo(ctrlX, ctrlY, curveX, curveY); // Рисуем кривую
+            ctx.stroke();
+        }
+
+        // Начинаем рисование
+        render();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
